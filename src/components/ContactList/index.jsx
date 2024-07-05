@@ -5,7 +5,7 @@ import { deleteContacts } from "../../redux/contactsSlicer";
 
 import styles from "./ContactList.module.scss";
 
-const ContactList = () => {
+const ContactList = (storage) => {
   const contacts = useSelector(getContacts);
   const filterValue = useSelector(getFilter);
   const dispatch = useDispatch();
