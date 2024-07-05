@@ -1,30 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./ContactForm.module.scss";
 import PropTypes from "prop-types";
+import { useDispatch, useSelector } from "react-redux";
+import { getContacts } from "../../redux/selectors";
+import { nanoid } from "nanoid";
+import { addContacts } from "../../redux/contactsSlicer";
 
-const ContactForm = ({ addContact }) => {
-  const [formValue, setFormValue] = useState({
-    name: "",
-    number: "",
-  });
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(getContacts);
+  
 
-  const handleChange = (e) => {
-    const { name, value } = e.currentTarget;
-    setFormValue((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const { name, number } = formValue;
-    addContact(name, number);
-    setFormValue({ name: "", number: "" });
-  };
+  const handleSubmit = event => {
+    event.preventDefault();
+    const form = event.target;
+    const contact = {
+      name: form.name.value,
+      number: form.number.value,
+      id: nanoid(),
+    };
+
+    let isContact;
+    contacts.forEach(person => {
+      if (contact.name.toLowerCase() === person.name.toLowerCase()) {
+        isContact = true;
+      }
+    });
+    isContact
+      ? alert(`${contact.name} is already in contacts!`)
+      : dispatch(addContacts(contact));
+
+    form.reset();
+  }
+
+  // const numberId = nanoid();
+  // const nameId = nanoid();
+  
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <label htmlFor="name">Name</label>
+      <label htmlFor={"name"}>Name</label>
       <input
         id="name"
         type="text"
@@ -32,8 +47,7 @@ const ContactForm = ({ addContact }) => {
         pattern="^[a-zA-Z]+(([' \-][a-zA-Z ])?[a-zA-Z]*)*$"
         title="Name may contain only letters, apostrophe, dash and spaces."
         required
-        value={formValue.name}
-        onChange={handleChange}
+        
       />
       <label htmlFor="number">Phone number</label>
       <input
@@ -43,8 +57,7 @@ const ContactForm = ({ addContact }) => {
         required
         title="Phone number must be digits and can contain spaces, dashes,
         parentheses and can start with +"
-        value={formValue.number}
-        onChange={handleChange}
+        
       />
       <button type="submit">Add contact</button>
     </form>
