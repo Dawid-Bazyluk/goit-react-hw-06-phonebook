@@ -34,8 +34,6 @@ const ContactForm = () => {
     form.reset();
   }
 
-  // const numberId = nanoid();
-  // const nameId = nanoid();
   
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
